@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import connectMongo from "../../../db/mongo.connection";
-import Product from "../../../db/models/product";
 import { HttpStatusCode } from "axios";
-import mongoose from "mongoose";
+import Cart from "../../../db/models/cart";
+// import mongoose from "mongoose";
 
 export async function GET() {
   try {
@@ -11,10 +11,10 @@ export async function GET() {
     // const collection = mongoose.connection.db.collection("themepark_suppliers");
     // const documents = await collection.find({}).toArray();
 
-    const products = await Product.find();
-    return NextResponse.json({ products });
+    const carts = await Cart.find();
+    return NextResponse.json({ count: carts.length, carts });
   } catch (error) {
-    return NextResponse.json({ status: 400, message: error.message });
+    return NextResponse.json({ message: error.message }, { status: 400 });
   }
 }
 
@@ -22,20 +22,22 @@ export async function POST(req) {
   try {
     await connectMongo();
     const body = await req.json();
-    if (body.name) {
-      const product = await Product.create(body);
+    if (Object.keys(body).length) {
+      const cart = new Cart({ data: body });
+      await cart.save();
+
       return NextResponse.json(
-        { product, message: "Your product has been created" },
+        { cart, message: "Your cart has been created" },
         { status: HttpStatusCode.Created }
       );
     }
     return NextResponse.json(
-      { message: "Product name is missing" },
+      { message: "Data name is missing" },
       { status: HttpStatusCode.BadRequest }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: error },
+      { message: error.message },
       { status: HttpStatusCode.BadRequestHttpStatusCode }
     );
   }

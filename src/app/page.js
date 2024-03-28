@@ -1,14 +1,15 @@
 import axios from "axios";
 import { headers } from "next/headers";
+import ShoppingCartList from "./_components/cart";
 
 export default async function Home() {
-  const uri = headers().get("referer");
-  const response = await axios.get(uri + "api/partner");
+  const http = headers().get("x-forwarded-proto");
+  const uri = headers().get("x-forwarded-host");
+  const response = await axios.get(http + "://" + uri + "/api/partner");
+  const cart = response.data.carts[0];
   return (
     <div>
-      <h1>Hello world!!!</h1>
-      <h3>API Response</h3>
-      <p>{JSON.stringify(response.data)}</p>
+      <ShoppingCartList cart={cart} />
     </div>
   );
 }

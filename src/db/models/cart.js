@@ -1,10 +1,8 @@
 import { model, models, Schema } from "mongoose";
 
-const ProductSchema = new Schema(
+const CartSchema = new Schema(
   {
-    name: String,
-    description: String,
-    price: Number,
+    data: Object,
   },
   {
     timestamps: true,
@@ -17,5 +15,5 @@ const ProductSchema = new Schema(
     },
   }
 );
-const Product = models.Product || model("Product", ProductSchema);
-export default Product;
+const Cart = models.Cart || model("Cart", CartSchema);
+export default Cart;
